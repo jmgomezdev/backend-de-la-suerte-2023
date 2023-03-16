@@ -1,0 +1,41 @@
+html {
+  font-size: 16px;
+}
+body {
+  font-size: 1rem;
+  height: 100%;
+  min-height: 100vh;
+  text-rendering: optimizeLegibility;
+}
+
+.reading {
+  @apply text-base font-light leading-loose md:leading-relaxed  lg:text-lg;
+  p {
+    @apply my-3;
+  }
+  ul {
+    list-style-type: disc;
+  }
+  ol {
+    list-style-type: decimal;
+  }
+  ul,
+  ol {
+    @apply mb-3 mt-1 pl-7;
+    li:not(:last-child) {
+      @apply mb-1;
+    }
+    li::marker {
+      @apply text-xl font-semibold text-indigo-800;
+    }
+  }
+  blockquote {
+    @apply border-l-4 border-indigo-800 p-2 text-base italic md:my-4 md:-ml-7 md:pl-7 md:text-lg;
+    & > p {
+      text-indent: -0.6ch;
+    }
+  }
+  strong {
+    @apply font-semibold;
+  }
+}
