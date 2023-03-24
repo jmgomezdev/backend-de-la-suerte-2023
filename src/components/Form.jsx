@@ -1,13 +1,17 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
+import Order from "./Order";
 
-export default function Form() {
+const ESPECIAL = "clfkrhfbp000ctu1w51lxj0pk";
+
+export default function Form({ platos }) {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
+  const [isReset, setIsReset] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
-  const isMutating = isFetching || isPending;
+  const select = useRef(null);
+  const isMutating = isFetching;
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -15,12 +19,25 @@ export default function Form() {
 
     const form = e.currentTarget;
     const title = form.elements.namedItem("title");
-    const content = form.elements.namedItem("content");
+    const table = form.elements.namedItem("table");
+    const comment = form.elements.namedItem("comment");
+    const order = select.current;
+    if (!order?.length) {
+      alert("No hay platos en la comanda");
+      return;
+    }
+    const priority = order.some((plate) => plate.id === ESPECIAL);
+    const orderStringified = JSON.stringify(order);
+
+    setIsReset(true);
 
     const res = await fetch("/api/comandas", {
       body: JSON.stringify({
         title: title.value,
-        content: content.value,
+        table: table.value,
+        content: comment?.value,
+        priority,
+        order: orderStringified,
       }),
       headers: {
         "Content-Type": "application/json",
@@ -29,54 +46,73 @@ export default function Form() {
     });
 
     title.value = "";
-    content.value = "";
+    table.value = "";
+    comment.value = "";
+    select.current = null;
     const { error } = await res.json();
     console.log(error);
 
     setIsFetching(false);
-    startTransition(() => {
-      // Refresh the current route and fetch new data from the server without
-      // losing client-side browser or React state.
-      router.refresh();
-    });
+    setIsReset(false);
+    router.refresh();
   }
 
   return (
     <form
       style={{ opacity: !isMutating ? 1 : 0.7 }}
-      className="relative mx-auto max-w-[500px] rounded-lg border border-gray-200 bg-white p-6  shadow"
+      className="relative mx-auto max-w-3xl rounded-lg border border-gray-200 bg-white p-6  shadow"
       onSubmit={onSubmit}
     >
+      <div className="mb-6 grid grid-cols-4 gap-6">
+        <div className="col-span-3">
+          <label
+            htmlFor="title"
+            className="text-md mb-2 block font-medium text-gray-900"
+          >
+            Nombre*
+          </label>
+          <input
+            aria-label="Nombre"
+            placeholder="Nombre..."
+            name="title"
+            type="text"
+            required
+            className="text-md block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900"
+          />
+        </div>
+        <div className="col-span-1">
+          <label
+            htmlFor="table"
+            className="text-md mb-2 block font-medium text-gray-900"
+          >
+            Mesa*
+          </label>
+          <input
+            aria-label="Mesa..."
+            placeholder="Mesa..."
+            name="table"
+            type="number"
+            required
+            className="text-md block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900"
+          />
+        </div>
+      </div>
       <div className="mb-6">
-        <label
-          htmlFor="email"
-          className="text-gray-90 text-md mb-2 block font-medium"
-        >
-          Título
-        </label>
-        <input
-          aria-label="Comanda..."
-          placeholder="Comanda..."
-          disabled={isPending}
-          name="title"
-          type="text"
-          required
-          className="text-md block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-        />
+        <Order ref={select} options={platos} reset={isReset} />
       </div>
       <div className="mb-6">
         <label
-          htmlFor="email"
-          className="text-gray-90 text-md mb-2 block font-medium"
+          htmlFor="comment"
+          className="text-md mb-2 block font-medium text-gray-900"
         >
-          Contenido
+          Comentario
         </label>
-        <input
-          aria-label="Comida"
-          placeholder="Comida..."
-          disabled={isPending}
-          name="content"
-          type="text"
+        <textarea
+          rows="4"
+          aria-label="Comentarios"
+          placeholder="Comentarios..."
+          name="comment"
+          type="textarea"
           required
           className="text-md block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-blue-500 focus:ring-blue-500"
         />

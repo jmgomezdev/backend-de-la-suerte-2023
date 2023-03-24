@@ -4,48 +4,34 @@ const prisma = new PrismaClient();
 
 const userData = [
   {
-    name: "Alice",
-    email: "alice@prisma.io",
-    comandas: {
-      create: [
-        {
-          title: "Comanda 1",
-          content: "Una de chopitos",
-          published: true,
-        },
-      ],
-    },
+    name: "Sergi",
+    email: "sergi@malandriner.dev",
   },
   {
-    name: "Nilu",
-    email: "nilu@prisma.io",
-    comandas: {
-      create: [
-        {
-          title: "Comanda 2",
-          content: "Dos de rabas",
-          published: true,
-        },
-      ],
-    },
+    name: "Yuri",
+    email: "yuri@malandriner.dev",
   },
   {
-    name: "Mahmoud",
-    email: "mahmoud@prisma.io",
-    comandas: {
-      create: [
-        {
-          title: "Comanda 3",
-          content: "Tres de pulpo",
-          published: true,
-        },
-        {
-          title: "Comanda 4",
-          content: "Cuatro de cazón en adobo",
-        },
-      ],
-    },
+    name: "Dani",
+    email: "dani@malandriner.dev",
   },
+];
+
+const platosData = [
+  {
+    name: "Carrilleras humanas con puré de calabaza y salsa de vísceras",
+    price: 32.0,
+  },
+  { name: "Chuletas de Dedos Humanos", price: 37.0 },
+  { name: "Cóctel de Ojo de Humano", price: 12.99 },
+  {
+    name: "Hígado de bebé a la planca con una reducción de sangre",
+    price: 36.0,
+  },
+  { name: "Muslo de Pollo Podrido a la Mostaza Antigua", price: 32.0 },
+  { name: "Raviolis de sesos con salsa al PX", price: 24.5 },
+  { name: "Especial zombie", price: 56.99 },
+  { name: "Helado de Sangre de Zombi con Salsa de Hueso", price: 14.5 },
 ];
 
 async function main() {
@@ -55,6 +41,12 @@ async function main() {
       data: u,
     });
     console.log(`Created user with id: ${user.id}`);
+  }
+  for (const p of platosData) {
+    const plato = await prisma.platos.create({
+      data: p,
+    });
+    console.log(`Created plato with id: ${plato.id}`);
   }
   console.log(`Seeding finished.`);
 }

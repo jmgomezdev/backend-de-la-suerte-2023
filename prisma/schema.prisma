@@ -8,16 +8,34 @@ datasource db {
 }
 
 model Comandas {
-  id        String   @id @default(cuid())
-  title     String
-  content   String?
-  published Boolean  @default(false)
-  author    User?    @relation(fields: [authorId], references: [id])
-  authorId  String?
-  createdAt DateTime @default(now())
+  id               String             @id @default(cuid())
+  title            String
+  table            Int
+  comment          String?
+  priority         Boolean            @default(false)
+  authorId         String?
+  createdAt        DateTime           @default(now())
+  author           User?              @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  PlatosOnComandas PlatosOnComandas[]
 }
 
-// Necessary for Next auth
+model Platos {
+  id               String             @id @default(cuid())
+  name             String
+  price            Float?
+  PlatosOnComandas PlatosOnComandas[]
+}
+
+model PlatosOnComandas {
+  platoId   String
+  comandaId String
+  quantity  Int      @default(1)
+  comanda   Comandas @relation(fields: [comandaId], references: [id], onDelete: Cascade)
+  plato     Platos   @relation(fields: [platoId], references: [id], onDelete: Cascade)
+
+  @@id([platoId, comandaId])
+}
+
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -51,8 +69,8 @@ model User {
   emailVerified DateTime?
   image         String?
   accounts      Account[]
-  sessions      Session[]
   comandas      Comandas[]
+  sessions      Session[]
 }
 
 model VerificationToken {

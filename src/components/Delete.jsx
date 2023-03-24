@@ -12,10 +12,7 @@ export default function Delete({ id }) {
   async function onClick() {
     setIsFetching(true);
 
-    await fetch("/api/comandas", {
-      body: JSON.stringify({
-        id: id,
-      }),
+    await fetch(`/api/comandas/${id}`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -32,7 +29,7 @@ export default function Delete({ id }) {
 
   return (
     <button
-      className="w-auto rounded-lg bg-blue-700 p-2 text-center text-sm font-medium text-white hover:bg-blue-800"
+      className="w-auto rounded-lg bg-red-700 p-2 text-center text-sm font-medium text-white hover:bg-red-800"
       disabled={isMutating}
       type="button"
       onClick={onClick}
