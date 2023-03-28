@@ -1,4 +1,5 @@
 import Delete from "./Delete";
+import DispatchOne from "./DispatchOne";
 
 export const datetimeFormatter = new Intl.DateTimeFormat("es-ES", {
   day: "2-digit",
@@ -10,19 +11,25 @@ export const datetimeFormatter = new Intl.DateTimeFormat("es-ES", {
 });
 
 export default function Comanda({ data, order }) {
+  const trolledClass = data?.trolled ? "bg-red-100" : "bg-white";
   return (
-    <div className="col-span-6 rounded-lg border border-gray-200 bg-white p-6 shadow xl:col-span-4">
+    <div
+      className={`col-span-6 rounded-lg border border-gray-200 p-6 shadow xl:col-span-4 ${trolledClass}`}
+    >
       <span className="flex items-center justify-between">
         <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900">
           {data?.title}
         </h5>
-        <Delete id={data?.id} />
+        <span className="flex gap-3">
+          <DispatchOne id={data?.id} />
+          <Delete id={data?.id} />
+        </span>
       </span>
       <div className="ml-3 py-6 px-3">
         <ul>
           {data?.PlatosOnComandas?.map((item) => (
             <li
-              key={`${data.id}-${item.id}`}
+              key={`${data.id}-${item.platoId}`}
               className="flex list-disc items-center justify-between"
             >
               <span className="list-item text-sm marker:font-semibold marker:text-blue-700">

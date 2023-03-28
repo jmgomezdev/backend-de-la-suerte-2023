@@ -1,13 +1,7 @@
-import Comanda from "../components/Comanda";
-import DeleteAll from "../components/DeleteAll";
-import Form from "../components/Form";
-import getComandas from "../service/getComandas";
-import getPlatos from "../service/getPlatos";
-
-export const revalidate = 0;
+import Comandas from "../components/Comandas";
+import { getPlatos } from "../service/platos";
 
 export default async function Page() {
-  const comandas = await getComandas();
   const platos = await getPlatos();
   return (
     <>
@@ -16,25 +10,7 @@ export default async function Page() {
       </h1>
       <main className="container m-auto mt-6">
         <h2 className="mb-5 text-3xl">Comandas:</h2>
-        <div className="grid grid-cols-12 items-start justify-center gap-5">
-          {comandas?.map((comanda, index) => (
-            <Comanda key={comanda.id} data={comanda} order={index + 1} />
-          ))}
-        </div>
-        <hr className="mt-12 mb-8" />
-        {(comandas?.length || 0) > 4 ? (
-          <>
-            <h2 className="mb-5 text-center text-3xl text-red-700">
-              No se pueden crear más comandas
-            </h2>
-            <DeleteAll />
-          </>
-        ) : (
-          <>
-            <h2 className="mb-5 text-3xl">Crear Comanda:</h2>
-            <Form platos={platos} />
-          </>
-        )}
+        <Comandas platos={platos} />
       </main>
     </>
   );

@@ -86,7 +86,7 @@ const Order = forwardRef(function Order(props, ref) {
 
   return (
     <>
-      <p className="text-md mb-2 block font-medium text-gray-900">Platos</p>
+      <p className="mb-2 block font-medium text-gray-900">Platos*</p>
       <Select
         primaryColor={"indigo"}
         onChange={handleChangeSelect}

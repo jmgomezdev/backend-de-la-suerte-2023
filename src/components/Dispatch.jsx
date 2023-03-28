@@ -1,14 +1,19 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { usePost } from "../hooks/usePost";
-import { COMANDA_KEY, deleteComandas } from "../service/comandas";
+import { COMANDA_KEY, putComanda } from "../service/comandas";
 
-export default function DeleteAll() {
-  const mutation = usePost(COMANDA_KEY, deleteComandas);
+export default function Dispatch() {
+  const mutation = usePost(COMANDA_KEY, putComanda);
+  const queryClient = useQueryClient();
 
   async function onClick() {
+    const comandasCache = queryClient.getQueryData(COMANDA_KEY);
+    if (comandasCache?.length === 0) return;
+    const request = { id: comandasCache[0]?.id, dispatchedAt: new Date() };
     try {
-      await mutation.mutateAsync();
+      await mutation.mutateAsync(request);
     } catch (error) {
       console.error(error);
     }
@@ -17,7 +22,7 @@ export default function DeleteAll() {
   return (
     <div className="text-center">
       <button
-        className="mx-auto mb-6 flex w-auto items-center gap-3 rounded-lg bg-red-700 py-2 px-4 text-xl font-medium text-white hover:bg-red-800"
+        className="mx-auto mb-6 flex w-auto items-center gap-3 rounded-lg bg-blue-700 py-2 px-4 text-xl font-medium text-white hover:bg-blue-800"
         disabled={mutation.isLoading}
         type="button"
         onClick={onClick}
@@ -53,14 +58,10 @@ export default function DeleteAll() {
             strokeLinejoin="round"
           >
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-            <line x1="4" y1="7" x2="20" y2="7" />
-            <line x1="10" y1="11" x2="10" y2="17" />
-            <line x1="14" y1="11" x2="14" y2="17" />
-            <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-            <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+            <path d="M5 12l5 5l10 -10" />
           </svg>
         )}
-        ELIMINAR TODAS
+        DESPACHAR
       </button>
     </div>
   );

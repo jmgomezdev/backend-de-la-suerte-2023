@@ -1,6 +1,6 @@
 import prisma from "../server/db";
 
-export default async function getPlatos() {
+export async function getPlatos() {
   try {
     const data = await prisma.platos.findMany({
       orderBy: {

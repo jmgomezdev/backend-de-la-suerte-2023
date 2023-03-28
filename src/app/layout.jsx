@@ -1,3 +1,4 @@
+import Providers from "../components/Providers";
 import "../styles/global.css";
 import "../styles/tailwind.css";
 
@@ -9,7 +10,10 @@ export default function RootLayout({ children }) {
         head.jsx. Find out more at https://beta.nextjs.org/docs/api-reference/file-conventions/head
       */}
       <head />
-      <body className="bg-gray-100">{children}</body>
+      <body className="bg-gray-100">
+        {" "}
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

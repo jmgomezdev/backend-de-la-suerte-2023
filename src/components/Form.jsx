@@ -2,20 +2,18 @@
 
 import { useRouter } from "next/navigation";
 import { useRef, useState, useTransition } from "react";
+import { usePost } from "../hooks/usePost";
+import { COMANDA_KEY, postComanda } from "../service/comandas";
 import Order from "./Order";
 
 const ESPECIAL = "clfkrhfbp000ctu1w51lxj0pk";
 
 export default function Form({ platos }) {
-  const router = useRouter();
-  const [isReset, setIsReset] = useState(false);
-  const [isFetching, setIsFetching] = useState(false);
   const select = useRef(null);
-  const isMutating = isFetching;
+  const mutation = usePost(COMANDA_KEY, postComanda);
 
   async function onSubmit(e) {
     e.preventDefault();
-    setIsFetching(true);
 
     const form = e.currentTarget;
     const title = form.elements.namedItem("title");
@@ -29,37 +27,27 @@ export default function Form({ platos }) {
     const priority = order.some((plate) => plate.id === ESPECIAL);
     const orderStringified = JSON.stringify(order);
 
-    setIsReset(true);
-
-    const res = await fetch("/api/comandas", {
-      body: JSON.stringify({
-        title: title.value,
-        table: table.value,
-        content: comment?.value,
-        priority,
-        order: orderStringified,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-    });
-
-    title.value = "";
-    table.value = "";
-    comment.value = "";
-    select.current = null;
-    const { error } = await res.json();
-    console.log(error);
-
-    setIsFetching(false);
-    setIsReset(false);
-    router.refresh();
+    const request = {
+      title: title.value,
+      table: table.value,
+      comment: comment?.value,
+      priority,
+      order: orderStringified,
+    };
+    try {
+      await mutation.mutateAsync(request);
+      title.value = "";
+      table.value = "";
+      comment.value = "";
+      select.current = null;
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   return (
     <form
-      style={{ opacity: !isMutating ? 1 : 0.7 }}
+      style={{ opacity: mutation.isLoading ? 0.7 : 1 }}
       className="relative mx-auto max-w-3xl rounded-lg border border-gray-200 bg-white p-6  shadow"
       onSubmit={onSubmit}
     >
@@ -98,7 +86,7 @@ export default function Form({ platos }) {
         </div>
       </div>
       <div className="mb-6">
-        <Order ref={select} options={platos} reset={isReset} />
+        <Order ref={select} options={platos} reset={mutation.isSuccess} />
       </div>
       <div className="mb-6">
         <label
@@ -113,14 +101,13 @@ export default function Form({ platos }) {
           placeholder="Comentarios..."
           name="comment"
           type="textarea"
-          required
           className="text-md block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-blue-500 focus:ring-blue-500"
         />
       </div>
       <div className="text-center">
         <button
           className="text-md w-full rounded-lg bg-blue-700 px-5 py-2.5 text-center font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 sm:w-auto"
-          disabled={isMutating}
+          disabled={mutation.isLoading}
           type="submit"
         >
           Enviar
