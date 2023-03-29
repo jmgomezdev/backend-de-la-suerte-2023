@@ -12,6 +12,12 @@ export default async function Page() {
         <h2 className="mb-5 text-3xl">Comandas:</h2>
         <Comandas platos={platos} />
       </main>
+      <footer className="mt-8 mb-4 text-center text-xl font-bold tracking-tight">
+        <p>
+          Hecho con <span className="font-mono">❤</span> por José Manuel Gómez
+          Pérez
+        </p>
+      </footer>
     </>
   );
 }

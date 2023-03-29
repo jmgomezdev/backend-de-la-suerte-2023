@@ -11,7 +11,6 @@ export default function RootLayout({ children }) {
       */}
       <head />
       <body className="bg-gray-100">
-        {" "}
         <Providers>{children}</Providers>
       </body>
     </html>
